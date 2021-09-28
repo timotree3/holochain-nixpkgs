@@ -13,6 +13,9 @@
 , pkgs ? import sources.nixpkgs {
     inherit system crossSystem overlays;
   }
+, pkgsUnstable ? import sources.nixpkgs-unstable {
+    inherit system crossSystem overlays;
+  }
 
 , rustPlatformSelector ? "stable"
 , rustPlatform ? pkgs.rust.packages."${rustPlatformSelector}".rustPlatform
@@ -31,7 +34,19 @@ in
 
   # expose the imported nixpkgs
   inherit pkgs;
+  inherit pkgsUnstable;
 
   # expose packages
   inherit packages;
+
+  # expose this derivation as the only one so it is used by `nix-shell`
+  shellDerivation = pkgs.mkShell {
+    name = "env";
+    packages = (with pkgs; [
+        niv
+        nix-build-uncached
+        rustPlatform.rust.rustc
+        nvfetcher
+    ]);
+  };
 }

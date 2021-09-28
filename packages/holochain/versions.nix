@@ -1,13 +1,14 @@
 # TODO: automate updating these
+# 0. bump ${attrName}.holochain.rev
 # 1. set all sha256 and cargoSha256 to "0000000000000000000000000000000000000000000000000000"
-# 2. try to build
-# 3. replace first sha256 with output
-# 4. try to build
-# 5. replace second sha256 with output
-# 6. try to build
-# 7. replace first cargoSha256 with output
-# 7. try to build
-# 8. replace second cargoSha256 with output
+# 2. build holochain: nix build -f default.nix packages.holochainAllBinariesWithDeps.${attrName}.holochain
+# 3. replace ${attrName}.holochain.sha256 with output
+# 4. build holochain: nix build -f default.nix packages.holochainAllBinariesWithDeps.${attrName}.holochain
+# 5. replace ${attrName}.holochain.cargoSha256 with output
+# 6. build lair-keystore: nix build -f default.nix packages.holochainAllBinariesWithDeps.${attrName}.lair-keystore
+# 7. replace ${attrName}.lair-keystore.sha256 with output
+# 8. build lair-keystore: nix build -f default.nix packages.holochainAllBinariesWithDeps.${attrName}.lair-keystore
+# 10. replace ${attrName}.lair-keystore.cargoSha256 with output
 
 {
   develop = {

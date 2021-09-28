@@ -3,4 +3,5 @@
   #
   rust-overlay = import ./rust-overlay.nix;
   rust = import ./rust.nix;
+  nvfetcher = import ./nvfetcher.nix;
 }
