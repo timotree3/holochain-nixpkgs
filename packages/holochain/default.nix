@@ -1,6 +1,6 @@
 { stdenv
 , rustPlatform
-, fetchFromGitHub
+, fetchgit
 , perl
 , xcbuild
 , darwin
@@ -20,15 +20,16 @@ let
       rev
       , owner ? "holochain"
       , repo ? "holochain"
+      , url ? "https://github.com/${owner}/${repo}"
       , sha256
-      , cargoSha256
+      , cargoOutputHashes
       , crate
       , cargoBuildFlags ? [
         "--no-default-features"
         "--manifest-path=crates/${crate}/Cargo.toml"
       ]
 
-      , ... } @ overrides: rustPlatform.buildRustPackage (lib.attrsets.recursiveUpdate {
+      , ... } @ overrides: rustPlatform.buildRustPackage (lib.attrsets.recursiveUpdate rec {
     passthru = {
       inherit crate;
     };
@@ -36,12 +37,18 @@ let
     name = "holochain";
     cargoDepsName = "holochain";
 
-    src = lib.makeOverridable fetchFromGitHub {
-      inherit owner repo;
-      inherit rev sha256;
+    src = lib.makeOverridable fetchgit {
+      inherit url rev sha256;
+
+      deepClone = false;
+      leaveDotGit = false;
     };
 
-    inherit cargoSha256;
+    cargoLock = {
+      lockFile = "${src}/Cargo.lock";
+      outputHashes = cargoOutputHashes;
+    };
+
     inherit cargoBuildFlags;
 
     nativeBuildInputs = [ perl pkgconfig ] ++ lib.optionals stdenv.isDarwin [
@@ -77,20 +84,20 @@ let
   mkHolochainAllBinaries = {
     rev
     , sha256
-    , cargoSha256
+    , cargoOutputHashes
     , bins
     , ...
   } @ overrides:
     lib.attrsets.mapAttrs (_: crate:
       mkHolochainBinary ({
-        inherit rev sha256 cargoSha256 crate;
+        inherit rev sha256 cargoOutputHashes crate;
       } // overrides)
     ) bins
   ;
 
-  mkHolochainAllBinariesWithDeps = { rev, sha256, cargoSha256, bins, lairKeystoreHashes } @ args:
+  mkHolochainAllBinariesWithDeps = { rev, sha256, cargoOutputHashes, bins, lairKeystoreHashes } @ args:
     mkHolochainAllBinaries {
-      inherit rev sha256 cargoSha256 bins;
+      inherit rev sha256 cargoOutputHashes bins;
     }
     // {
       lair-keystore = mkHolochainBinary {
@@ -99,7 +106,7 @@ let
         rev = let
           holochainSrc = (mkHolochainBinary {
             crate = "lair_keystore_api";
-            inherit rev sha256 cargoSha256;
+            inherit rev sha256 cargoOutputHashes;
           }).src;
           holochainKeystoreTOML = lib.trivial.importTOML
             "${holochainSrc}/crates/holochain_keystore/Cargo.toml";
@@ -110,12 +117,12 @@ let
             lairKeystoreApiVersionRaw
             ;
         in "v${lairKeystoreApiVersion}";
-        inherit (lairKeystoreHashes) sha256 cargoSha256;
+        inherit (lairKeystoreHashes) sha256 cargoOutputHashes;
       };
     }
     ;
 
-  versions = import ./versions.nix;
+  versions = lib.trivial.importJSON ./versions.json;
 in
 
 {

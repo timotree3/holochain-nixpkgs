@@ -18,7 +18,7 @@
   }
 
 , rustPlatformSelector ? "stable"
-, rustPlatform ? pkgs.rust.packages."${rustPlatformSelector}".rustPlatform
+, rustPlatform ? pkgsUnstable.rust.packages."${rustPlatformSelector}".rustPlatform
 }:
 
 let
