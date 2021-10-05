@@ -6,14 +6,15 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ sources ? import ./nix/sources.nix
+{ sources ? import ./nix/nvfetcher/sources.nix
 , system ? builtins.currentSystem
 , crossSystem ? null
 , overlays ? builtins.attrValues (import ./overlays)
-, pkgs ? import sources.nixpkgs {
+
+, pkgs ? import sources.nixpkgs.src {
     inherit system crossSystem overlays;
   }
-, pkgsUnstable ? import sources.nixpkgs-unstable {
+, pkgsUnstable ? import sources.nixpkgs-unstable.src {
     inherit system crossSystem overlays;
   }
 
@@ -32,6 +33,9 @@ in
   overlays = import ./overlays; # nixpkgs overlays
 
 
+  # expose the sources
+  inherit sources;
+
   # expose the imported nixpkgs
   inherit pkgs;
   inherit pkgsUnstable;
@@ -43,7 +47,6 @@ in
   shellDerivation = pkgs.mkShell {
     name = "env";
     packages = (with pkgs; [
-        niv
         nix-build-uncached
         rustPlatform.rust.rustc
         nvfetcher
