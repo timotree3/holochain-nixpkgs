@@ -19,3 +19,19 @@ src.git = "https://github.com/holochain/holochain"
 fetch.git = "https://github.com/holochain/holochain"
 src.git_branch = "main"
 cargo_lock = "Cargo.lock"
+
+[lair_main]
+src.git = "https://github.com/holochain/lair"
+fetch.git = "https://github.com/holochain/lair"
+src.manual = "bd92b76ad9cc18bc0c0db215e4bea9767c9003cf"
+cargo_lock = "Cargo.lock"
+
+[lair_develop]
+src.git = "https://github.com/holochain/lair"
+fetch.git = "https://github.com/holochain/lair"
+src.manual = "bd92b76ad9cc18bc0c0db215e4bea9767c9003cf"
+cargo_lock = "Cargo.lock"
+
+[rust-overlay]
+src.git = "https://github.com/oxalica/rust-overlay"
+fetch.git = "https://github.com/oxalica/rust-overlay"

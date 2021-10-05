@@ -49,7 +49,17 @@ in
     packages = (with pkgs; [
         nix-build-uncached
         rustPlatform.rust.rustc
+
         nvfetcher
+        (pkgs.writeScriptBin "nvfetcher-build" ''
+          pushd ${toString ./.}/nix/nvfetcher
+          ${nvfetcher}/bin/nvfetcher build $@
+        '')
+
+        (pkgs.writeScriptBin "nvfetcher-clean" ''
+          pushd ${toString ./.}/nix/nvfetcher
+          ${nvfetcher}/bin/nvfetcher clean $@
+        '')
     ]);
   };
 }
