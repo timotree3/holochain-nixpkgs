@@ -1,0 +1,18 @@
+[package]
+name = "update-holochain-versions"
+version = "0.1.0"
+authors = ["Stefan Junker <mail@stefanjunker.de>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rnix = "0.9"
+structopt = "0.3"
+anyhow = "1.0"
+tempfile = "3.2"
+handlebars = "4.1"
+maplit = "1.0"
+serde = { version = "1.0", features =["derive"] }
+regex = "1.5"
+once_cell = "1.8"
